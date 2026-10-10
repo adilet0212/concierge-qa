@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM"],
+    // Global types for the WebdriverIO runner: browser/$/$$, expect matchers, mocha describe/it.
+    "types": ["node", "@wdio/globals/types", "expect-webdriverio", "@wdio/mocha-framework"]
+  },
+  "include": ["web", "mobile", "../test-data"]
+}

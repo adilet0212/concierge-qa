@@ -1,5 +1,36 @@
+# Local-only files (never commit)
 BRIEF.md
 private/
-node_modules/
 CL[Aa]UDE.md
 .cl[Aa]ude/
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+app/web/dist/
+
+# Test reports and run artefacts
+reports/
+allure-results/
+allure-report/
+logs/
+*.log
+
+# Mobile: downloaded demo app binaries and local emulator data
+apps/
+*.apk
+*.ipa
+.android-avd/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Environment files (BrowserStack keys etc. come from env vars, never from the repo)
+.env
+.env.*
+!.env.example
