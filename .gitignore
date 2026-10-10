@@ -1,4 +1,4 @@
-# Local-only files (never commit)
+# Local-only files (never commit). [Aa] matches either case, so this works on every OS.
 BRIEF.md
 private/
 CL[Aa]UDE.md

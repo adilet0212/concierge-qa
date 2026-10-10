@@ -24,7 +24,8 @@ export default defineConfig(
     languageOptions: { globals: { ...globals.node } },
   },
   {
-    files: ['app/web/**/*.{ts,tsx}'],
+    // Browser code, plus test helpers whose callbacks run inside the browser (browser.execute).
+    files: ['app/web/**/*.{ts,tsx}', 'practice/bug-hunt/support/**/*.js'],
     languageOptions: { globals: { ...globals.browser } },
   },
   {
