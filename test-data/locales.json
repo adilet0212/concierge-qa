@@ -1,0 +1,5 @@
+[
+  { "code": "en", "name": "English", "signInTitle": "Sign in", "propertiesTitle": "Choose your destination", "confirmationTitle": "Your stay is confirmed" },
+  { "code": "fr", "name": "Français", "signInTitle": "Se connecter", "propertiesTitle": "Choisissez votre destination", "confirmationTitle": "Votre séjour est confirmé" },
+  { "code": "ja", "name": "日本語", "signInTitle": "ログイン", "propertiesTitle": "目的地を選択", "confirmationTitle": "ご予約が確定しました" }
+]

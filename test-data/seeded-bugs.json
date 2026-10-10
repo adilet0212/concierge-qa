@@ -1,0 +1,8 @@
+[
+  { "id": 1, "title": "Dining total: service charge calculated on subtotal + tax", "caughtBy": ["calculates the in-room dining bill"] },
+  { "id": 2, "title": "Date picker allows check-out on the check-in date", "caughtBy": ["does not allow check-out on the check-in date", "rejects invalid stay dates"] },
+  { "id": 3, "title": "Reservation shown in the browser time zone, not the property's", "caughtBy": ["shows check-in and check-out in local time"] },
+  { "id": 4, "title": "Missing French translation key shows booking.confirm.title", "caughtBy": ["fr: the booking confirmation is translated", "fr: key screens show no raw translation keys"] },
+  { "id": 5, "title": "Double-clicking Place order creates two orders", "caughtBy": ["creates only one order when Place order is double-clicked"] },
+  { "id": 6, "title": "Sign-in code field accepts 5 digits; server sends 6", "caughtBy": ["signs in with the emailed one-time code", "rejects an expired code", "keeps the guest signed in after a reload"] }
+]

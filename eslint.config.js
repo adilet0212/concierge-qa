@@ -38,6 +38,8 @@ export default defineConfig(
       'wdio/await-expect': 'error',
       'wdio/no-pause': 'error',
       'wdio/no-debug': 'error',
+      // API response bodies in tests are loosely typed on purpose; the assertions check their shape.
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
 );

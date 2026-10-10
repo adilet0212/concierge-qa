@@ -11,6 +11,11 @@ orderRoutes.use(requireGuest);
 
 const MAX_QUANTITY = 20;
 
+// A real kitchen system takes a moment to acknowledge an order. The demo waits this long
+// before answering (the order is already saved), like a hotel network would. That is the window
+// in which guests tap "Place order" twice, so the double-submit test is realistic and reliable.
+const KITCHEN_CONFIRMATION_DELAY_MS = Number(process.env.KITCHEN_DELAY_MS ?? 400);
+
 orderRoutes.post('/', (req, res) => {
   const guest = currentGuest(res);
   const property = findProperty(String(req.body?.propertyId));
@@ -62,7 +67,7 @@ orderRoutes.post('/', (req, res) => {
 
   store.orders.set(order.id, order);
   if (idempotencyKey) store.orderIdsByIdempotencyKey.set(`${guest.email}:${idempotencyKey}`, order.id);
-  res.status(201).json(order);
+  setTimeout(() => res.status(201).json(order), KITCHEN_CONFIRMATION_DELAY_MS);
 });
 
 orderRoutes.get('/', (req, res) => {
