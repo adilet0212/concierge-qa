@@ -1,0 +1,162 @@
+[
+  {
+    "id": "toronto",
+    "name": "Aurelle Toronto",
+    "city": { "en": "Toronto", "fr": "Toronto", "ja": "トロント" },
+    "country": { "en": "Canada", "fr": "Canada", "ja": "カナダ" },
+    "timeZone": "America/Toronto",
+    "currency": "CAD",
+    "checkInTime": "15:00",
+    "checkOutTime": "12:00",
+    "roomTaxRate": 0.13,
+    "nightlyFee": 3000,
+    "diningTaxRate": 0.13,
+    "serviceChargeRate": 0.18,
+    "roomTypes": [
+      { "id": "deluxe-king", "name": { "en": "Deluxe King", "fr": "Chambre Deluxe King", "ja": "デラックスキング" }, "maxGuests": 2, "nightlyRate": 65000 },
+      { "id": "premier-suite", "name": { "en": "Premier Suite", "fr": "Suite Premier", "ja": "プレミアスイート" }, "maxGuests": 3, "nightlyRate": 98000 },
+      { "id": "family-suite", "name": { "en": "Family Suite", "fr": "Suite Familiale", "ja": "ファミリースイート" }, "maxGuests": 5, "nightlyRate": 145000 }
+    ],
+    "menu": [
+      { "id": "club-sandwich", "name": { "en": "Club sandwich", "fr": "Club sandwich", "ja": "クラブサンドイッチ" }, "price": 3200 },
+      { "id": "caesar-salad", "name": { "en": "Caesar salad", "fr": "Salade César", "ja": "シーザーサラダ" }, "price": 2400 },
+      { "id": "wagyu-burger", "name": { "en": "Wagyu burger", "fr": "Burger au wagyu", "ja": "和牛バーガー" }, "price": 4200 },
+      { "id": "seasonal-fruit", "name": { "en": "Seasonal fruit plate", "fr": "Assiette de fruits de saison", "ja": "季節のフルーツ盛り合わせ" }, "price": 1800 },
+      { "id": "sparkling-water", "name": { "en": "Sparkling water", "fr": "Eau pétillante", "ja": "スパークリングウォーター" }, "price": 900 },
+      { "id": "chocolate-fondant", "name": { "en": "Chocolate fondant", "fr": "Fondant au chocolat", "ja": "フォンダンショコラ" }, "price": 1600 }
+    ],
+    "spaTreatments": [
+      { "id": "signature-massage", "name": { "en": "Signature massage", "fr": "Massage signature", "ja": "シグネチャーマッサージ" }, "durationMinutes": 60, "price": 21000 },
+      { "id": "radiance-facial", "name": { "en": "Radiance facial", "fr": "Soin visage éclat", "ja": "ラディアンスフェイシャル" }, "durationMinutes": 50, "price": 18500 },
+      { "id": "couples-ritual", "name": { "en": "Couples ritual", "fr": "Rituel pour deux", "ja": "カップルリチュアル" }, "durationMinutes": 90, "price": 42000 }
+    ]
+  },
+  {
+    "id": "paris",
+    "name": "Aurelle Paris",
+    "city": { "en": "Paris", "fr": "Paris", "ja": "パリ" },
+    "country": { "en": "France", "fr": "France", "ja": "フランス" },
+    "timeZone": "Europe/Paris",
+    "currency": "EUR",
+    "checkInTime": "15:00",
+    "checkOutTime": "12:00",
+    "roomTaxRate": 0.1,
+    "nightlyFee": 500,
+    "diningTaxRate": 0.1,
+    "serviceChargeRate": 0.12,
+    "roomTypes": [
+      { "id": "deluxe-king", "name": { "en": "Deluxe King", "fr": "Chambre Deluxe King", "ja": "デラックスキング" }, "maxGuests": 2, "nightlyRate": 72000 },
+      { "id": "premier-suite", "name": { "en": "Premier Suite", "fr": "Suite Premier", "ja": "プレミアスイート" }, "maxGuests": 3, "nightlyRate": 115000 },
+      { "id": "family-suite", "name": { "en": "Family Suite", "fr": "Suite Familiale", "ja": "ファミリースイート" }, "maxGuests": 5, "nightlyRate": 168000 }
+    ],
+    "menu": [
+      { "id": "club-sandwich", "name": { "en": "Club sandwich", "fr": "Club sandwich", "ja": "クラブサンドイッチ" }, "price": 2900 },
+      { "id": "caesar-salad", "name": { "en": "Caesar salad", "fr": "Salade César", "ja": "シーザーサラダ" }, "price": 2600 },
+      { "id": "wagyu-burger", "name": { "en": "Wagyu burger", "fr": "Burger au wagyu", "ja": "和牛バーガー" }, "price": 4400 },
+      { "id": "seasonal-fruit", "name": { "en": "Seasonal fruit plate", "fr": "Assiette de fruits de saison", "ja": "季節のフルーツ盛り合わせ" }, "price": 1900 },
+      { "id": "sparkling-water", "name": { "en": "Sparkling water", "fr": "Eau pétillante", "ja": "スパークリングウォーター" }, "price": 800 },
+      { "id": "chocolate-fondant", "name": { "en": "Chocolate fondant", "fr": "Fondant au chocolat", "ja": "フォンダンショコラ" }, "price": 1700 }
+    ],
+    "spaTreatments": [
+      { "id": "signature-massage", "name": { "en": "Signature massage", "fr": "Massage signature", "ja": "シグネチャーマッサージ" }, "durationMinutes": 60, "price": 19000 },
+      { "id": "radiance-facial", "name": { "en": "Radiance facial", "fr": "Soin visage éclat", "ja": "ラディアンスフェイシャル" }, "durationMinutes": 50, "price": 17000 },
+      { "id": "couples-ritual", "name": { "en": "Couples ritual", "fr": "Rituel pour deux", "ja": "カップルリチュアル" }, "durationMinutes": 90, "price": 39000 }
+    ]
+  },
+  {
+    "id": "tokyo",
+    "name": "Aurelle Tokyo",
+    "city": { "en": "Tokyo", "fr": "Tokyo", "ja": "東京" },
+    "country": { "en": "Japan", "fr": "Japon", "ja": "日本" },
+    "timeZone": "Asia/Tokyo",
+    "currency": "JPY",
+    "checkInTime": "15:00",
+    "checkOutTime": "12:00",
+    "roomTaxRate": 0.1,
+    "nightlyFee": 1000,
+    "diningTaxRate": 0.1,
+    "serviceChargeRate": 0.15,
+    "roomTypes": [
+      { "id": "deluxe-king", "name": { "en": "Deluxe King", "fr": "Chambre Deluxe King", "ja": "デラックスキング" }, "maxGuests": 2, "nightlyRate": 85000 },
+      { "id": "premier-suite", "name": { "en": "Premier Suite", "fr": "Suite Premier", "ja": "プレミアスイート" }, "maxGuests": 3, "nightlyRate": 132000 },
+      { "id": "family-suite", "name": { "en": "Family Suite", "fr": "Suite Familiale", "ja": "ファミリースイート" }, "maxGuests": 5, "nightlyRate": 198000 }
+    ],
+    "menu": [
+      { "id": "club-sandwich", "name": { "en": "Club sandwich", "fr": "Club sandwich", "ja": "クラブサンドイッチ" }, "price": 3800 },
+      { "id": "caesar-salad", "name": { "en": "Caesar salad", "fr": "Salade César", "ja": "シーザーサラダ" }, "price": 3000 },
+      { "id": "wagyu-burger", "name": { "en": "Wagyu burger", "fr": "Burger au wagyu", "ja": "和牛バーガー" }, "price": 6200 },
+      { "id": "seasonal-fruit", "name": { "en": "Seasonal fruit plate", "fr": "Assiette de fruits de saison", "ja": "季節のフルーツ盛り合わせ" }, "price": 2800 },
+      { "id": "sparkling-water", "name": { "en": "Sparkling water", "fr": "Eau pétillante", "ja": "スパークリングウォーター" }, "price": 1200 },
+      { "id": "chocolate-fondant", "name": { "en": "Chocolate fondant", "fr": "Fondant au chocolat", "ja": "フォンダンショコラ" }, "price": 2200 }
+    ],
+    "spaTreatments": [
+      { "id": "signature-massage", "name": { "en": "Signature massage", "fr": "Massage signature", "ja": "シグネチャーマッサージ" }, "durationMinutes": 60, "price": 26000 },
+      { "id": "radiance-facial", "name": { "en": "Radiance facial", "fr": "Soin visage éclat", "ja": "ラディアンスフェイシャル" }, "durationMinutes": 50, "price": 23000 },
+      { "id": "couples-ritual", "name": { "en": "Couples ritual", "fr": "Rituel pour deux", "ja": "カップルリチュアル" }, "durationMinutes": 90, "price": 52000 }
+    ]
+  },
+  {
+    "id": "dubai",
+    "name": "Aurelle Dubai",
+    "city": { "en": "Dubai", "fr": "Dubaï", "ja": "ドバイ" },
+    "country": { "en": "United Arab Emirates", "fr": "Émirats arabes unis", "ja": "アラブ首長国連邦" },
+    "timeZone": "Asia/Dubai",
+    "currency": "AED",
+    "checkInTime": "15:00",
+    "checkOutTime": "12:00",
+    "roomTaxRate": 0.12,
+    "nightlyFee": 2000,
+    "diningTaxRate": 0.05,
+    "serviceChargeRate": 0.1,
+    "roomTypes": [
+      { "id": "deluxe-king", "name": { "en": "Deluxe King", "fr": "Chambre Deluxe King", "ja": "デラックスキング" }, "maxGuests": 2, "nightlyRate": 210000 },
+      { "id": "premier-suite", "name": { "en": "Premier Suite", "fr": "Suite Premier", "ja": "プレミアスイート" }, "maxGuests": 3, "nightlyRate": 325000 },
+      { "id": "family-suite", "name": { "en": "Family Suite", "fr": "Suite Familiale", "ja": "ファミリースイート" }, "maxGuests": 5, "nightlyRate": 480000 }
+    ],
+    "menu": [
+      { "id": "club-sandwich", "name": { "en": "Club sandwich", "fr": "Club sandwich", "ja": "クラブサンドイッチ" }, "price": 9500 },
+      { "id": "caesar-salad", "name": { "en": "Caesar salad", "fr": "Salade César", "ja": "シーザーサラダ" }, "price": 7800 },
+      { "id": "wagyu-burger", "name": { "en": "Wagyu burger", "fr": "Burger au wagyu", "ja": "和牛バーガー" }, "price": 14000 },
+      { "id": "seasonal-fruit", "name": { "en": "Seasonal fruit plate", "fr": "Assiette de fruits de saison", "ja": "季節のフルーツ盛り合わせ" }, "price": 6500 },
+      { "id": "sparkling-water", "name": { "en": "Sparkling water", "fr": "Eau pétillante", "ja": "スパークリングウォーター" }, "price": 2800 },
+      { "id": "chocolate-fondant", "name": { "en": "Chocolate fondant", "fr": "Fondant au chocolat", "ja": "フォンダンショコラ" }, "price": 5500 }
+    ],
+    "spaTreatments": [
+      { "id": "signature-massage", "name": { "en": "Signature massage", "fr": "Massage signature", "ja": "シグネチャーマッサージ" }, "durationMinutes": 60, "price": 65000 },
+      { "id": "radiance-facial", "name": { "en": "Radiance facial", "fr": "Soin visage éclat", "ja": "ラディアンスフェイシャル" }, "durationMinutes": 50, "price": 58000 },
+      { "id": "couples-ritual", "name": { "en": "Couples ritual", "fr": "Rituel pour deux", "ja": "カップルリチュアル" }, "durationMinutes": 90, "price": 130000 }
+    ]
+  },
+  {
+    "id": "maui",
+    "name": "Aurelle Maui",
+    "city": { "en": "Maui", "fr": "Maui", "ja": "マウイ" },
+    "country": { "en": "United States", "fr": "États-Unis", "ja": "アメリカ合衆国" },
+    "timeZone": "Pacific/Honolulu",
+    "currency": "USD",
+    "checkInTime": "15:00",
+    "checkOutTime": "12:00",
+    "roomTaxRate": 0.18,
+    "nightlyFee": 4500,
+    "diningTaxRate": 0.045,
+    "serviceChargeRate": 0.2,
+    "roomTypes": [
+      { "id": "deluxe-king", "name": { "en": "Deluxe King", "fr": "Chambre Deluxe King", "ja": "デラックスキング" }, "maxGuests": 2, "nightlyRate": 89000 },
+      { "id": "premier-suite", "name": { "en": "Premier Suite", "fr": "Suite Premier", "ja": "プレミアスイート" }, "maxGuests": 3, "nightlyRate": 135000 },
+      { "id": "family-suite", "name": { "en": "Family Suite", "fr": "Suite Familiale", "ja": "ファミリースイート" }, "maxGuests": 5, "nightlyRate": 199000 }
+    ],
+    "menu": [
+      { "id": "club-sandwich", "name": { "en": "Club sandwich", "fr": "Club sandwich", "ja": "クラブサンドイッチ" }, "price": 3400 },
+      { "id": "caesar-salad", "name": { "en": "Caesar salad", "fr": "Salade César", "ja": "シーザーサラダ" }, "price": 2800 },
+      { "id": "wagyu-burger", "name": { "en": "Wagyu burger", "fr": "Burger au wagyu", "ja": "和牛バーガー" }, "price": 4800 },
+      { "id": "seasonal-fruit", "name": { "en": "Seasonal fruit plate", "fr": "Assiette de fruits de saison", "ja": "季節のフルーツ盛り合わせ" }, "price": 2400 },
+      { "id": "sparkling-water", "name": { "en": "Sparkling water", "fr": "Eau pétillante", "ja": "スパークリングウォーター" }, "price": 1000 },
+      { "id": "chocolate-fondant", "name": { "en": "Chocolate fondant", "fr": "Fondant au chocolat", "ja": "フォンダンショコラ" }, "price": 1800 }
+    ],
+    "spaTreatments": [
+      { "id": "signature-massage", "name": { "en": "Signature massage", "fr": "Massage signature", "ja": "シグネチャーマッサージ" }, "durationMinutes": 60, "price": 24000 },
+      { "id": "radiance-facial", "name": { "en": "Radiance facial", "fr": "Soin visage éclat", "ja": "ラディアンスフェイシャル" }, "durationMinutes": 50, "price": 21000 },
+      { "id": "couples-ritual", "name": { "en": "Couples ritual", "fr": "Rituel pour deux", "ja": "カップルリチュアル" }, "durationMinutes": 90, "price": 47000 }
+    ]
+  }
+]

@@ -9,7 +9,11 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "typecheck": "tsc -p practice/bug-hunt/tools",
+    "app": "npm run app:build && npm run app:serve",
+    "app:bugs": "cross-env BUG_MODE=on npm run app",
+    "app:build": "vite build --config app/vite.config.ts",
+    "app:serve": "tsx app/server/index.ts",
+    "typecheck": "tsc -p app && tsc -p practice/bug-hunt/tools",
     "lint": "eslint .",
     "bug-hunt": "tsx practice/bug-hunt/tools/run.ts",
     "bug-hunt:verify": "tsx practice/bug-hunt/tools/verify.ts",
