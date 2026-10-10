@@ -18,6 +18,8 @@
     "test:firefox": "cross-env BROWSER=firefox npm run test:regression",
     "test:mobile-web": "wdio run tests/web/wdio.mobile-web.conf.ts --mochaOpts.grep @smoke",
     "test:seeded-bugs": "tsx scripts/run-seeded-bugs.ts",
+    "test:mobile": "wdio run tests/mobile/wdio.android.conf.ts",
+    "mobile:download-app": "tsx scripts/download-demo-app.ts",
     "report:summary": "tsx scripts/summarize-results.ts",
     "typecheck": "tsc -p app && tsc -p tests && tsc -p scripts && tsc -p practice/bug-hunt/tools",
     "lint": "eslint .",
