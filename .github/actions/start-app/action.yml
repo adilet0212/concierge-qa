@@ -1,0 +1,21 @@
+name: Start the Aurelle demo app
+description: Builds the web app, starts the server in the background and waits until it answers.
+
+inputs:
+  bug-mode:
+    description: Value for BUG_MODE ("on" switches on the six seeded regressions)
+    required: false
+    default: 'off'
+
+runs:
+  using: composite
+  steps:
+    - name: Build and start the app on http://localhost:4300
+      shell: bash
+      env:
+        BUG_MODE: ${{ inputs.bug-mode }}
+      run: |
+        npm run app:build
+        nohup npm run app:serve > app.log 2>&1 &
+        npx wait-on --timeout 60000 http://localhost:4300/api/health
+        curl -s http://localhost:4300/api/health

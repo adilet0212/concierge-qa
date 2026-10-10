@@ -35,7 +35,11 @@ const pixel = emulatedPhone(
   'Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36',
 );
 
+// MOBILE_PROFILE=iphone or =pixel runs just one profile (CI runs them as two parallel jobs).
+const profiles = { iphone: iPhone, pixel };
+const selected = profiles[process.env.MOBILE_PROFILE as keyof typeof profiles];
+
 export const config: WebdriverIO.Config = {
   ...webConfig,
-  capabilities: [iPhone, pixel],
+  capabilities: selected ? [selected] : [iPhone, pixel],
 };

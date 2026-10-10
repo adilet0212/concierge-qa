@@ -1,0 +1,223 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 24
+  # Browsers run in Toronto time, like the QA team. The property time-zone tests then compare
+  # Toronto against Paris, Tokyo, Dubai and Maui.
+  TZ: America/Toronto
+
+jobs:
+  checks:
+    name: Typecheck, lint and bug-hunt verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - id: typecheck
+        run: npm run typecheck
+      - id: lint
+        run: npm run lint
+      - id: locales
+        run: npm run lint:locales
+      - id: bughunt
+        name: Bug-hunt pack (every exercise fails as written, passes when fixed)
+        run: npm run bug-hunt:verify
+      - name: Job summary
+        if: always()
+        run: |
+          icon() { [ "$1" = "success" ] && echo "✅" || echo "❌"; }
+          {
+            echo "### Static checks"
+            echo ""
+            echo "| Check | Result |"
+            echo "|---|---|"
+            echo "| TypeScript (strict) | $(icon '${{ steps.typecheck.outcome }}') ${{ steps.typecheck.outcome }} |"
+            echo "| ESLint (incl. no browser.pause, await expect) | $(icon '${{ steps.lint.outcome }}') ${{ steps.lint.outcome }} |"
+            echo "| Translation files have the same keys | $(icon '${{ steps.locales.outcome }}') ${{ steps.locales.outcome }} |"
+            echo "| Bug-hunt exercises verified | $(icon '${{ steps.bughunt.outcome }}') ${{ steps.bughunt.outcome }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  smoke:
+    name: Smoke (Chrome)
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - uses: ./.github/actions/start-app
+      - run: npm run test:smoke
+      - name: Job summary
+        if: always()
+        run: npx tsx scripts/summarize-results.ts "Smoke (Chrome)"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: allure-results-smoke-chrome
+          path: reports/allure-results
+          if-no-files-found: ignore
+          retention-days: 14
+
+  regression:
+    name: Regression (${{ matrix.browser }})
+    needs: smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - uses: ./.github/actions/start-app
+      - run: npm run test:regression
+        env:
+          BROWSER: ${{ matrix.browser }}
+          MAX_INSTANCES: 4 # GitHub-hosted runners have 4 CPU cores
+      - name: Job summary
+        if: always()
+        run: npx tsx scripts/summarize-results.ts "Regression (${{ matrix.browser }})"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: allure-results-regression-${{ matrix.browser }}
+          path: reports/allure-results
+          if-no-files-found: ignore
+          retention-days: 14
+
+  mobile-web:
+    name: Mobile web smoke (${{ matrix.profile }})
+    needs: smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [iphone, pixel]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - uses: ./.github/actions/start-app
+      - run: npm run test:mobile-web
+        env:
+          MOBILE_PROFILE: ${{ matrix.profile }}
+      - name: Job summary
+        if: always()
+        run: npx tsx scripts/summarize-results.ts "Mobile web smoke (${{ matrix.profile }})"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: allure-results-mobile-web-${{ matrix.profile }}
+          path: reports/allure-results
+          if-no-files-found: ignore
+          retention-days: 14
+
+  seeded-bugs:
+    name: Seeded bugs (does the suite catch real regressions?)
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - uses: ./.github/actions/start-app
+        with:
+          bug-mode: 'on'
+      # Runs the regression suite against the buggy app (failures expected), then maps the
+      # failures to the six seeded bugs. This step passes only if all six were caught, and it
+      # writes the catch-rate table to the job summary.
+      - run: npm run test:seeded-bugs
+        env:
+          MAX_INSTANCES: 4
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: allure-results-seeded-bugs
+          path: reports/allure-results
+          if-no-files-found: ignore
+          retention-days: 14
+
+  android:
+    name: Android native app
+    needs: checks
+    # The emulator job is slow, so it runs on main and on demand, not on every pull request.
+    if: github.event_name != 'pull_request'
+    uses: ./.github/workflows/android.yml
+
+  report:
+    name: Publish Allure reports to GitHub Pages
+    needs: [smoke, regression, mobile-web, seeded-bugs, android]
+    if: always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: allure-results-*
+          path: reports/artifacts
+      - name: Generate one Allure report per suite
+        run: |
+          for dir in reports/artifacts/allure-results-*; do
+            suite="${dir##*/allure-results-}"
+            npx allure generate "$dir" --output "reports/pages/$suite" --name "Concierge QA: $suite"
+          done
+          npx tsx scripts/build-pages-index.ts
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: reports/pages
+      - id: deployment
+        uses: actions/deploy-pages@v5
+      - name: Job summary
+        run: |
+          echo "### Test reports" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "📊 Allure reports for this run: ${{ steps.deployment.outputs.page_url }}" >> "$GITHUB_STEP_SUMMARY"
