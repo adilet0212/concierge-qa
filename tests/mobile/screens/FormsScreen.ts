@@ -26,6 +26,17 @@ class FormsScreen extends BaseScreen {
   get activeButton() {
     return this.byAccessibilityId('button-Active');
   }
+
+  /**
+   * The Active button sits below the dropdown. On a small screen it is off-screen, and Android
+   * only reports views that are on screen, so the button can't be found until we scroll to it.
+   * `scrollIntoView` swipes inside the form (direction 'up' = finger moves up, content moves
+   * up) until the button is displayed, then we tap it.
+   */
+  async tapActiveButton() {
+    await this.activeButton.scrollIntoView({ direction: 'up', scrollableElement: this.screen });
+    await this.activeButton.click();
+  }
 }
 
 export default new FormsScreen();

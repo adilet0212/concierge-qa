@@ -20,7 +20,7 @@ describe('Form components @regression', () => {
   });
 
   it('opens an alert with three choices and dismisses it', async () => {
-    await FormsScreen.activeButton.click();
+    await FormsScreen.tapActiveButton();
 
     await NativeAlert.waitForShown();
     await expect(NativeAlert.title).toHaveText('This button is');
