@@ -21,6 +21,7 @@
     "test:mobile": "wdio run tests/mobile/wdio.android.conf.ts",
     "mobile:download-app": "tsx scripts/download-demo-app.ts",
     "report:summary": "tsx scripts/summarize-results.ts",
+    "report:allure": "allure generate reports/allure-results --output reports/allure-report --open",
     "typecheck": "tsc -p app && tsc -p tests && tsc -p scripts && tsc -p practice/bug-hunt/tools",
     "lint": "eslint .",
     "lint:locales": "tsx scripts/check-locales.ts",

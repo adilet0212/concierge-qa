@@ -91,6 +91,7 @@ To use a real phone instead, enable *Developer options → USB debugging*, plug 
 | `The instrumentation process cannot be initialized` | The emulator is too slow or still busy after first boot. Wait a few minutes after boot, close other apps, or give the emulator more RAM in Device Manager. |
 | A system dialog like "… isn't responding" covers the app | The emulator is overloaded. Tap **Wait**, then use a smaller device, a cold boot, or CI. |
 | `Unable to connect to "http://127.0.0.1:4723/"` | Another Appium may already use port 4723. Stop it and retry. |
+| "element wasn't found", but you can see it | Compare the selector with the screen hierarchy (XML) attached to the Allure report: ids can differ from what you expect (native alert titles do). Off-screen views aren't reported at all on Android, so scroll to them first (see `FormsScreen.tapActiveButton()`). |
 
 ## How it runs in CI
 
