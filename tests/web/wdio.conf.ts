@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import allure from '@wdio/allure-reporter';
@@ -16,6 +17,16 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const headless = process.env.HEADED !== 'true';
 const browserName = process.env.BROWSER ?? 'chrome';
 const WINDOW = { width: 1366, height: 900 };
+
+/**
+ * How many browsers to run at once when MAX_INSTANCES isn't set: one per 1.5 GB of memory,
+ * between 1 and 5. Too many on a small laptop make it swap, tests pass the 60 s timeout, and a
+ * timed-out test keeps running in the background into its own retry (docs/LEARN.md, story 5).
+ */
+function defaultMaxInstances(): number {
+  const memoryGb = os.totalmem() / 1024 ** 3;
+  return Math.min(5, Math.max(1, Math.floor(memoryGb / 1.5)));
+}
 
 export const chromeDesktop: WebdriverIO.Capabilities = {
   browserName: 'chrome',
@@ -43,7 +54,7 @@ export const config: WebdriverIO.Config = {
 
   // Spec files run in parallel, one browser per worker. This is safe because every test
   // creates its own guest and data through the API (see support/api-client.ts).
-  maxInstances: Number(process.env.MAX_INSTANCES ?? 5),
+  maxInstances: Number(process.env.MAX_INSTANCES ?? defaultMaxInstances()),
   capabilities: [browserName === 'firefox' ? firefoxDesktop : chromeDesktop],
 
   baseUrl: BASE_URL,

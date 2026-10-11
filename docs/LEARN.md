@@ -58,7 +58,7 @@ for one spec file and runs Mocha in it. The important settings in
 | Setting | Our value | Why |
 |---|---|---|
 | `specs` | `tests/web/specs/*.spec.ts` | Which files are tests |
-| `maxInstances` | 5 (4 in the CI regression and seeded-bug jobs) | Spec files run in parallel, one browser each. Safe because tests don't share data |
+| `maxInstances` | one per 1.5 GB of RAM, up to 5 (4 in the CI regression and seeded-bug jobs) | Spec files run in parallel, one browser each. Safe because tests don't share data; limited so a small laptop doesn't swap |
 | `capabilities` | Chrome or Firefox (env `BROWSER`) | Which browser, and its options (headless, window size) |
 | `baseUrl` | `http://localhost:4300` | So tests can write `browser.url('/sign-in')` |
 | `waitforTimeout` | 10 s (20 s for Android) | How long auto-waits and `expect` matchers keep retrying |
@@ -337,6 +337,15 @@ These are real, and they make good answers to "tell me about a bug you found":
    started before the screen had rendered (`scrollIntoView` doesn't auto-wait), so the screen object
    now waits for the form first. Lesson: read the evidence (screenshot, XML, Appium log) before
    changing timeouts.
+5. **A cart that doubled: a test that kept running after it timed out.** On a 6 GB laptop, one
+   Firefox run failed with a dining subtotal of exactly double the expected amount (16000 instead of
+   8000). *Exactly* double meant both attempts of the test had added dishes to the same cart. Five
+   browsers at once had overloaded the machine, the first attempt went past Mocha's 60 s timeout, and
+   Mocha started the retry. But Mocha can't stop a timed-out async test, so the first attempt kept
+   clicking "Add" on the retry's page. A small throwaway spec proved the mechanism (the retry counted
+   2 clicks instead of 1). Fix: the default number of parallel browsers now fits the machine's memory
+   (`defaultMaxInstances()` in `wdio.conf.ts`). Lesson: a retry is only independent if the first
+   attempt has really stopped, and the test setup has to fit the machine it runs on.
 
 ---
 
@@ -388,7 +397,7 @@ runs on an emulator in CI. Next I'd add iOS with XCUITest and run the same specs
 3. **How do your tests stay independent and run in parallel?**
    Each test creates its own guest with a unique email through the API, and its own bookings and
    orders. Nothing is shared, and the database is reset only once, before the run. So the order
-   doesn't matter and five browsers can run at once.
+   doesn't matter and several browsers can run at once.
 
 4. **Why create test data through the API instead of the UI?**
    Speed and focus. Signing in through the UI takes seconds; the API takes milliseconds. Each UI test

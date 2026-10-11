@@ -75,7 +75,7 @@ Start the app first (`npm run app`) for every web suite.
 | Command | What it runs |
 |---|---|
 | `npm run test:smoke` | 6 critical-path tests on Chrome (about 1 minute) |
-| `npm run test:regression` | All 71 web tests on Chrome, 5 in parallel |
+| `npm run test:regression` | All 71 web tests on Chrome, several browsers in parallel |
 | `npm run test:firefox` | All 71 web tests on Firefox |
 | `npm run test:mobile-web` | The smoke tests on an iPhone-size and a Pixel-size phone (Chrome mobile emulation) |
 | `npm run app:bugs`, then `npm run test:seeded-bugs` | The app with all six seeded bugs on, then the regression suite; prints the catch-rate table and passes only at 6/6 |
@@ -86,7 +86,7 @@ Start the app first (`npm run app`) for every web suite.
 | `npm run bug-hunt -- js-08`, `npm run bug-hunt:verify` | The [bug-hunt practice pack](practice/bug-hunt/README.md) |
 
 Useful options (environment variables): `HEADED=true` to watch the browser, `BROWSER=firefox`,
-`MAX_INSTANCES=2` to run fewer browsers at once (worth it on a machine with less than 8 GB of RAM), `MOBILE_PROFILE=iphone|pixel`, `BASE_URL`.
+`MAX_INSTANCES=2` to set how many browsers run at once (default: one per 1.5 GB of RAM, up to 5), `MOBILE_PROFILE=iphone|pixel`, `BASE_URL`.
 They work on every OS through cross-env, e.g. `npx cross-env HEADED=true npm run test:smoke`.
 
 ## Test reports

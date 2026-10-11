@@ -58,7 +58,14 @@ app.get('/{*path}', (_req, res) => {
   res.sendFile(path.join(webDist, 'index.html'));
 });
 
-app.listen(PORT, () => {
+// Express 5 calls this with an error when the server could NOT start. The usual cause is the
+// app already running in another terminal. Without this check we would print "running" and exit.
+app.listen(PORT, (error) => {
+  if (error) {
+    console.error(`Could not start the Aurelle demo app on port ${PORT}: ${error.message}`);
+    console.error('Is it already running in another terminal? Stop that one (Ctrl+C) and try again.');
+    process.exit(1);
+  }
   const bugs = getEnabledBugs();
   console.log(`Aurelle demo app running at http://localhost:${PORT}`);
   if (bugs.length > 0) {
