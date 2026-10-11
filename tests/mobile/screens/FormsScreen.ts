@@ -34,7 +34,12 @@ class FormsScreen extends BaseScreen {
    * up) until the button is displayed, then we tap it.
    */
   async tapActiveButton() {
-    await this.activeButton.scrollIntoView({ direction: 'up', scrollableElement: this.screen });
+    // Unlike most commands, scrollIntoView does not auto-wait (it exists to find elements that
+    // are NOT on screen yet). Right after a tab change the form may still be rendering, so wait
+    // for it first and hand scrollIntoView the found element.
+    await this.screen.waitForDisplayed();
+    const form = await this.screen;
+    await this.activeButton.scrollIntoView({ direction: 'up', scrollableElement: form });
     await this.activeButton.click();
   }
 }
