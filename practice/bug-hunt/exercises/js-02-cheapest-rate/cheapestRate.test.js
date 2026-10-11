@@ -16,3 +16,14 @@ describe('cheapestRate', () => {
     expect(cheapestRate(offers(620))).toBe(620);
   });
 });
+
+describe('cheapestRate with sold-out offers', () => {
+  it('ignores sold-out offers', () => {
+    const list = [{ nightlyRate: 95, available: false }, { nightlyRate: 450 }, { nightlyRate: 300 }];
+    expect(cheapestRate(list)).toBe(300);
+  });
+
+  it('returns null when every offer is sold out', () => {
+    expect(cheapestRate([{ nightlyRate: 95, available: false }])).toBeNull();
+  });
+});

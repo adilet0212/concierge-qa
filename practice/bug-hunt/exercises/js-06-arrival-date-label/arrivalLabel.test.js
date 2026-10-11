@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { arrivalLabel } from './arrivalLabel.js';
+import { arrivalLabel, nightsLabel } from './arrivalLabel.js';
 
 describe('arrivalLabel', () => {
   it.each([
@@ -8,5 +8,14 @@ describe('arrivalLabel', () => {
     ['2026-01-31', 'Sat, 31 Jan 2026'],
   ])('%s -> %s', (isoDate, label) => {
     expect(arrivalLabel(isoDate)).toBe(label);
+  });
+});
+
+describe('nightsLabel', () => {
+  it.each([
+    [1, '1 night'],
+    [3, '3 nights'],
+  ])('%i -> %s', (nights, label) => {
+    expect(nightsLabel(nights)).toBe(label);
   });
 });

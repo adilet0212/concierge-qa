@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { topRatedRooms } from './topRatedRooms.js';
+import { ratingLabel, topRatedRooms } from './topRatedRooms.js';
 
 function sampleRooms() {
   return [
@@ -23,5 +23,15 @@ describe('topRatedRooms', () => {
     const rooms = sampleRooms();
     topRatedRooms(rooms, 2);
     expect(rooms.map((room) => room.name)).toEqual(['Deluxe King', 'Garden Suite', 'Classic Twin', 'Penthouse']);
+  });
+});
+
+describe('ratingLabel', () => {
+  it('shows the rating with one decimal and the number of reviews', () => {
+    expect(ratingLabel({ rating: 4.9, reviewCount: 212 })).toBe('★ 4.9 (212 reviews)');
+  });
+
+  it('uses the singular for one review', () => {
+    expect(ratingLabel({ rating: 5, reviewCount: 1 })).toBe('★ 5.0 (1 review)');
   });
 });

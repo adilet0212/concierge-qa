@@ -16,7 +16,7 @@ const exercises = listExercises();
 if (!query) {
   console.log('Usage: npm run bug-hunt -- <exercise> [--solution]\n\nExercises:');
   for (const exercise of exercises) console.log(`  ${exercise.relativeDir}`);
-  process.exit(1);
+  process.exit(0); // listing the exercises is a normal use, not an error
 }
 
 const matches = exercises.filter((exercise) => exercise.id === query || exercise.id.startsWith(query));

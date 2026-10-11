@@ -202,6 +202,7 @@ Fixed code lives in [`solutions/`](solutions) under the same path as the exercis
 - **Root cause:** WebdriverIO commands and `expect-webdriverio` matchers return promises. An un-awaited assertion is a promise nobody checks; its failure (if any) happens after the test is already marked passed.
 - **Fix:** `await $(...).click();` and `await expect($(...)).toHaveText('1');`
 - **How to prove it:** temporarily change the expected text to `'99'`. The buggy test still passes; the fixed one fails.
+- **Test that catches it:** the "How to prove it" step above: a test must be able to fail. The `wdio/await-expect` lint rule catches the missing `await` before the test even runs.
 - **Prevention:** the ESLint rule `wdio/await-expect` and `@typescript-eslint/no-floating-promises` (this repo enables `wdio/await-expect`).
 - **Say it out loud:** "Every WebdriverIO command is async. Here the click and the expect aren't awaited, so the test function returns straight away and Mocha marks it green. The assertion would run later, if at all. A test that can't fail is worse than no test. I'd add the awaits and turn on the await-expect lint rule."
 
@@ -210,6 +211,7 @@ Fixed code lives in [`solutions/`](solutions) under the same path as the exercis
 - **Root cause:** a hard sleep guesses how long the app needs; the app's real timing varies.
 - **Fix:** `await expect($('[data-testid="order-status"]')).toHaveText('Received');`: the matcher retries until the text matches or `waitforTimeout` expires.
 - **Prevention:** `wdio/no-pause` lint rule (enabled in this repo).
+- **Test that catches it:** run the spec on a slow machine (or with CPU throttling) and it fails intermittently; `npm run lint` flags the pause straight away. The fixed version passes as soon as the status appears.
 - **Say it out loud:** "`browser.pause` waits a fixed time whether the page needs it or not, so the test is always 5 seconds slower, and if CI is slower than that, it still fails. WebdriverIO's expect matchers auto-wait and retry, so the test continues the moment the status appears. I'd replace pause plus getText with toHaveText."
 
 ### wdio-03 · Sign-in code step: wrong and fragile selectors
@@ -237,6 +239,7 @@ Fixed code lives in [`solutions/`](solutions) under the same path as the exercis
 - **Bug:** tests 2 and 3 rely on the browser state left by the previous test (signed in, on the right page). One failure cascades; running or retrying a single test fails. It also uses a fixed email shared across runs.
 - **Root cause:** test order is treated as setup. Each test must arrange its own preconditions.
 - **Fix:** every test starts from a known state: create a unique guest through the API, put the session in the browser, open the right URL (`openAsNewGuest('/properties/tokyo')`). Only the sign-in test uses the sign-in UI.
+- **Test that catches it:** run test 3 on its own (`--mochaOpts.grep "starts a booking"`) or in a different order: it fails, while the fixed tests pass alone, in any order and in parallel.
 - **Say it out loud:** "These three tests are really one test split in three. The second assumes the first left us signed in on the home page, so if the first fails, everything after it fails, and a retry of test 3 starts in a blank browser. I'd make each test independent: sign in through the API, which is fast, and deep-link to the page under test. Then tests can run alone, in any order, and in parallel."
 
 ### wdio-07 · Order history: shared data and a global reset in a parallel suite
@@ -244,6 +247,7 @@ Fixed code lives in [`solutions/`](solutions) under the same path as the exercis
 - **Bug 2:** `resetAllData()` in `beforeEach` wipes the **whole server** while four other workers are mid-test, deleting their sessions and bookings (their `401`s and "not found" errors).
 - **Root cause:** tests running in parallel share one backend, so any shared or global state becomes a race condition.
 - **Fix:** a unique guest per test (`uniqueEmail()`), and no global reset inside tests (reset once before the whole run, as this repo's `onPrepare` does, or not at all).
+- **Test that catches it:** run the spec in parallel with the rest of the suite (`maxInstances` > 1) a few times: the order count and other specs fail at random. The fixed version passes every time.
 - **Say it out loud:** "Alone it passes; in parallel it's flaky, so I look for shared state. Two things are shared: the guest email, so someone else's order shows up in 'my' history, and the reset, which deletes every other worker's data mid-test. That second one is why unrelated tests fail. Each test should create its own unique data and never reset global state."
 
 ### wdio-08 · Order tracking page object: missing `return` in a getter and in `waitUntil`
@@ -251,6 +255,7 @@ Fixed code lives in [`solutions/`](solutions) under the same path as the exercis
 - **Bug 2:** the `waitUntil` condition `async () => { (await ...) === expected; }` also has a block body without `return`, so it always resolves `undefined` (falsy) and waits for the full timeout.
 - **Root cause:** the same JavaScript rule twice: braces mean you need an explicit `return`.
 - **Fix:** `return $('[data-testid="order-status"]');` and `async () => (await this.status.getText()) === expected`. (Even simpler: `await expect(this.status).toHaveText(expected, { wait: 8000 })`.)
+- **Test that catches it:** the runnable spec "shows when the kitchen starts preparing the order": it first fails with "cannot read properties of undefined", then (after the getter fix) times out; the solution passes.
 - **Say it out loud:** "The first failure is 'cannot read getText of undefined', so I check the getter: it computes the element but doesn't return it. After fixing that, the test times out, which means the waitUntil condition is never truthy, and again it's a block body with no return. waitUntil needs the callback to return true. I'd also mention that toHaveText does this waiting for us."
 
 ---
@@ -261,18 +266,21 @@ Fixed code lives in [`solutions/`](solutions) under the same path as the exercis
 1. **`add` overwrites instead of increasing.** `line.quantity = quantity` → `line.quantity += quantity`. *Test:* "increases the quantity when the same dish is added again" (expects 3, gets 2).
 2. **`remove` of a missing item deletes the last line.** `findIndex` returns -1 and `splice(-1, 1)` removes the last element. Guard with `if (index === -1) return;`. *Test:* "does nothing when removing a dish that is not in the cart".
 3. **Service charge calculated on subtotal + tax.** Should be `Math.round(subtotal * this.serviceChargeRate)`. *Test:* totals expect service 900 (gets 1017). This is the same class of bug as the Aurelle app's seeded bug #1.
+- **Root cause:** three different rule slips: assignment instead of accumulation (`=` vs `+=`), not handling `findIndex` returning -1 (negative `splice` indexes count from the end), and the wrong base for a percentage.
 - **Say it out loud:** "I'll walk through the example: add club sandwich twice, so quantity should be 2, but the second add sets quantity to 1 instead of adding. Then remove: findIndex gives -1 for a missing dish, and splice with -1 counts from the end, so we silently delete the last line. Finally the totals: the spec says service is on the food subtotal, but the code adds tax first, so the guest pays service on tax. I'd add a test for each rule."
 
 ### sim-02 · Stay validator (3 bugs)
 1. **Daylight saving breaks `nightsBetween`.** Local midnights on 2026-03-07 and 2026-03-09 (Toronto) are 47 hours apart, so `Math.floor(47/24)` is 1. Use UTC dates (`Date.parse(\`${d}T00:00:00Z\`)`) and/or `Math.round`. *Test:* "counts nights across the spring daylight-saving change".
 2. **Same-day stays are accepted.** `nights < 0` should be `nights < 1`. *Test:* "rejects check-out on the same day as check-in".
 3. **A full room is rejected.** `>= room.maxGuests` should be `> room.maxGuests`. *Test:* "accepts a normal stay that fills the room exactly".
+- **Root cause:** two boundary conditions written one step off (`< 0` / `>=`), and date maths on local time, where a day is not always 24 hours long.
 - **Say it out loud:** "Two of these are boundary mistakes: zero nights passes because the check is `< 0` instead of `< 1`, and exactly two guests in a room for two fails because of `>=`. The third is subtler: the dates are parsed as local midnight, and on the night clocks spring forward there are only 23 hours between midnights, so dividing by 24 and flooring loses a night. Using UTC avoids DST entirely."
 
 ### sim-03 · API client with retries (3 bugs)
 1. **Too few attempts.** `for (attempt = 1; attempt < retries; ...)` runs `retries - 1` times (once with the default). Should be `attempt <= retries + 1`. *Tests:* "retries server errors and succeeds on the third attempt", "gives up after the first try plus two retries".
 2. **4xx returned as data instead of thrown.** Throw `new ApiError(response.status, problem.error)`, **and** make the `catch` rethrow non-retryable errors (`if (error instanceof ApiError && error.status < 500) throw error;`), otherwise the catch would swallow and retry it. *Test:* "does not retry a 404 and rejects with the server message".
 3. **`Authorization: Bearer null` when signed out.** Only add the header when `getToken()` returns a token. *Test:* "sends no Authorization header when the guest is signed out".
+- **Root cause:** an off-by-one loop bound, treating every HTTP response as success (fetch only rejects on network errors, never on 4xx/5xx), and building a header from a value that can be `null`.
 - **Say it out loud:** "With retries = 2 the spec says up to three attempts, but the loop runs from 1 while less than 2: a single attempt. Then a 404 is returned as a normal value, so callers think it succeeded; it should throw ApiError, and I have to be careful the catch block doesn't catch and retry my own 4xx error. Last, a signed-out guest sends 'Bearer null', which many servers reject. Each rule in the spec maps to one test."
 
 ---
@@ -282,47 +290,62 @@ Fixed code lives in [`solutions/`](solutions) under the same path as the exercis
 ### r1-a · Late checkout fee: `&&` instead of `||`
 - **Bug:** `guest.tier === 'gold' && guest.tier === 'platinum'` can never be true, so elite members are charged.
 - **Fix:** `||`. **Test:** gold at 13:00 and platinum at 15:00 should pay 0.
+- **Root cause:** "A or B" written as `&&`; a single value can never equal two different strings at once.
 - **Say it out loud:** "One variable can't equal two different values at the same time, so this condition is always false. The spec says gold *or* platinum, so it should be `||`. I'd test each tier."
 
 ### r1-b · Loyalty points: `parseInt` on a formatted number, and `>` vs `>=`
 - **Bug 1:** `parseInt('1,250.75')` stops at the comma and returns 1. Remove separators first: `Math.floor(Number(s.replaceAll(',', '')))`.
 - **Bug 2:** "3 nights or more" is `>= 3`, not `> 3`.
 - **Test:** `'1,250.75'` over 3 nights should be 13000 (gets 10).
+- **Root cause:** `parseInt` stops at the first character that isn't a digit, so formatted numbers need cleaning first; and "3 or more" is an inclusive boundary.
 - **Say it out loud:** "parseInt reads digits until the first character it doesn't understand, the comma, so 1,250 becomes 1. I'd strip the commas and use Number, then floor to drop cents. And the bonus condition is off by one at exactly three nights."
 
 ### r1-c · Kitchen queue: `map(async)` without `Promise.all`, and a boolean comparator
 - **Bug 1:** `outlets.map(async ...)` gives an array of promises; `flat()` doesn't wait for them. Use `await Promise.all(outlets.map(fetchOrders))`.
 - **Bug 2:** `(a, b) => a.placedAt > b.placedAt` returns `true`/`false`; `sort` needs a negative/zero/positive number. Use `Date.parse(a.placedAt) - Date.parse(b.placedAt)` (or `a.placedAt.localeCompare(b.placedAt)`).
+- **Root cause:** an `async` callback always returns a promise, so `map` produces promises that nothing awaits; and `sort` interprets the comparator's result as a number, so a boolean can never say "a comes first".
+- **Test:** "combines every outlet, oldest order first" (expects `['IRD-1', 'PB-1', 'IRD-2']`).
 - **Say it out loud:** "The result contains promises, not orders: an async map returns promises and nothing awaits them, so I'd wrap it in Promise.all. Then the comparator returns a boolean, which never tells sort that a should go first, so the order is basically unchanged. A comparator must return a number."
 
 ### r2-a · Amenity sentence: off-by-one in `slice`
 - **Bug:** `slice(0, length - 2)` drops two items; the end index is exclusive. Use `slice(0, -1)`.
 - **Test:** `['Pool', 'Spa']` gives `' and Spa'`.
+- **Root cause:** `slice`'s end index is exclusive, so "all but the last" is `slice(0, -1)` (or `length - 1`).
 - **Say it out loud:** "slice's end index isn't included, so to take everything except the last item the end should be length minus one. Minus two loses an amenity, and with two items the list before 'and' is empty."
 
 ### r2-b · Promo codes: regex `g` flag with `test()`
 - **Bug:** a global regex keeps `lastIndex` between `test()` calls, so checking the same valid code twice gives `true`, then `false`; in `filter`, every other valid code is rejected.
 - **Fix:** remove the `g` flag (it's useless for a whole-string `test`).
+- **Root cause:** with the `g` flag a RegExp object remembers `lastIndex`, and a module-level regex is shared by every call.
+- **Test:** "accepts a valid code every time it is checked" and "keeps every valid code from the list".
 - **Say it out loud:** "The pattern itself is right. But with the `g` flag, a regex object is stateful: after a successful test, lastIndex moves to the end, and the next test starts searching from there and fails. Because the regex is a shared constant, calls affect each other. Dropping `g` fixes it."
 
 ### r2-c · Chat merge: mutation, reference equality and a NaN comparator
 - **Bug 1:** `const merged = thread` is the same array, so `push` mutates React state. Use `[...thread, ...new]`.
 - **Bug 2:** `includes(message)` compares references; polled messages are fresh objects, so duplicates get in. Compare ids (a `Set` of ids).
 - **Bug 3:** `a.sentAt - b.sentAt` subtracts ISO strings → `NaN`, so nothing is sorted. Use `Date.parse(...)` on both.
+- **Root cause:** assigning an array copies the reference, not the array; `includes` compares objects by reference, not by content; and `-` on non-numeric strings gives `NaN`.
+- **Test:** "does not modify the thread on screen", "shows every message once", "sorts messages by time sent, oldest first".
 - **Say it out loud:** "First, `merged` is just another name for `thread`, so we're mutating state, which React won't detect. Second, includes checks object identity, and the server sends copies, so m2 appears twice; I'd compare by id. Third, subtracting two strings gives NaN, so the sort does nothing. I'd convert the timestamps to numbers."
 
 ### r3-a · Room key expiry: `getDay()` instead of `getTime()`
 - **Bug:** `keyExpiry(...).getDay()` is the day of the week (0 to 6), so `now.getTime() < 6` is always false.
 - **Fix:** `.getTime()`.
+- **Root cause:** two similar-looking Date methods: `getDay()` is the weekday (0 to 6), `getTime()` is milliseconds since 1970.
+- **Test:** "checkout 2026-07-04, now ... -> valid: true" (the key is rejected the evening before checkout).
 - **Say it out loud:** "We're comparing a timestamp in milliseconds with getDay, which is 0 to 6 for Sunday to Saturday, so the key is always invalid. Both sides need getTime."
 
 ### r3-b · Spa slots: string concatenation and a fencepost error
 - **Bug 1:** `split(':')` gives strings, so `hours * 60 + minutes` is `540 + '00'` = `'54000'` (string). Subtraction later *hides* it because `-` converts strings to numbers, but `opening + i * duration` concatenates. Fix: `.map(Number)` after `split`.
 - **Bug 2:** `Math.floor(...) + 1` adds a slot that starts at closing time and ends after it. Remove the `+ 1`.
+- **Root cause:** `split` returns strings, and `+` with a string concatenates; then a fencepost error (counting posts instead of gaps).
+- **Test:** "lists hourly slots that end by closing time" and "handles 90-minute treatments".
 - **Say it out loud:** "toMinutes mixes a number and a string, so `+` concatenates: 9 o'clock becomes '54000'. It's sneaky because the subtraction still gives a sensible number. After converting with Number, the slot count has a fencepost error: four one-hour treatments fit between 9 and 13, not five."
 
 ### r3-c · Checkout invoice: `reduce` without an initial value, discount scope, formatting cents
 - **Bug 1:** `lines.reduce((sum, line) => sum + line.amount)` with no initial value starts with the first **line object**, so the subtotal becomes `"[object Object]950018000"`. Add `, 0`.
 - **Bug 2:** the 10% loyalty discount is applied to the whole subtotal; it must apply to the room line only: `Math.round(roomLine.amount * 0.1)`.
 - **Bug 3:** `Intl.NumberFormat(...).format(cents)` formats cents as dollars (`$107,500.00`). Divide by 100.
+- **Root cause:** `reduce` without an initial value uses the first element (an object) as the accumulator; a rule applied to the wrong scope; and a unit mismatch (cents vs dollars).
+- **Test:** "gives loyalty members 10% off the room only", "charges non-members the full price", "formats amounts in dollars".
 - **Say it out loud:** "reduce without an initial value uses the first element as the accumulator, and here the elements are objects, so we get string concatenation with '[object Object]'. Then the discount is applied to dining and spa too, but the rule says room only. Finally, Intl expects dollars, and we pass cents, so everything is a hundred times too big."

@@ -13,6 +13,15 @@ It is used for the "from $___ per night" text on each property card.
 | `780, 1450` | `780` |
 | `620` | `620` |
 
+### Sold-out offers
+Offers that are sold out (`available: false`) are ignored. If every offer is sold out, it returns
+`null`, and the card shows "Sold out" instead of a price.
+
+| Offers | Output |
+|---|---|
+| `95` (sold out), `450`, `300` | `300` |
+| `95` (sold out) | `null` |
+
 ## Your task
 Read `cheapestRate.js` and find the bug before running anything. Explain the root cause out loud, fix it, then confirm:
 

@@ -8,3 +8,8 @@ export function arrivalLabel(isoDate) {
   const date = new Date(year, month - 1, day);
   return `${DAYS[date.getDay()]}, ${day} ${MONTHS[date.getMonth()]} ${year}`;
 }
+
+// Shown next to the arrival date, e.g. "3 nights".
+export function nightsLabel(nights) {
+  return nights === 1 ? '1 night' : `${nights} nights`;
+}

@@ -24,6 +24,10 @@ const rooms = [
 | `topRatedRooms(rooms)` | Garden Suite, Penthouse, Deluxe King |
 | `rooms` afterwards | still Deluxe King, Garden Suite, Classic Twin, Penthouse |
 
+### Also in this file
+`ratingLabel(room)` is the line on each card: `{ rating: 4.9, reviewCount: 212 }` →
+`'★ 4.9 (212 reviews)'`, and `{ rating: 5, reviewCount: 1 }` → `'★ 5.0 (1 review)'`.
+
 ## Your task
 Read `topRatedRooms.js` and find the bug before running anything. Explain the root cause out loud, fix it, then confirm:
 

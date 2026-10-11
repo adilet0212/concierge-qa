@@ -14,3 +14,9 @@ export function calculateBill(items, taxRate) {
     total: totalCents / 100,
   };
 }
+
+// "Delivery in 25-35 minutes": 10 to 20 minutes after the slowest dish is ready.
+export function deliveryWindow(items) {
+  const slowest = Math.max(...items.map((item) => item.prepMinutes ?? 15));
+  return `Delivery in ${slowest + 10}-${slowest + 20} minutes`;
+}

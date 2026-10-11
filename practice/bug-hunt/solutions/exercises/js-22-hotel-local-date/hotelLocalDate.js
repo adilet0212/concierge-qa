@@ -16,3 +16,11 @@ export function hotelLocalDate(now, timeZone) {
 export function isBreakfastVoucherValid(voucher, now, timeZone) {
   return voucher.validOn === hotelLocalDate(now, timeZone);
 }
+
+// Text on the voucher screen.
+export function voucherMessage(voucher, now, timeZone) {
+  if (isBreakfastVoucherValid(voucher, now, timeZone)) {
+    return 'Show this voucher at breakfast today.';
+  }
+  return `This voucher is valid on ${voucher.validOn}.`;
+}

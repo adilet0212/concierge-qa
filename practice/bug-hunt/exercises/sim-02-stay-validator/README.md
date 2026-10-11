@@ -16,7 +16,6 @@ It returns `{ valid, nights, errors }`. The rules:
 | Adults + children must not exceed the room's `maxGuests` (a room for 2 accepts 2) | `This room fits up to <maxGuests> guests.` |
 
 `nightsBetween(checkIn, checkOut)` counts nights, e.g. `2026-06-10` → `2026-06-13` is 3 nights.
-It must be right on every date of the year.
 (The practice runner pins the machine time zone to `America/Toronto` so results are the same on every machine.)
 
 ## Examples
@@ -26,6 +25,11 @@ It must be right on every date of the year.
 | 2026-03-07 → 2026-03-09, 1 adult, room for 2, today 2026-03-01 | `{ valid: true, nights: 2, errors: [] }` |
 | 2026-06-10 → 2026-06-10 | invalid: `Check-out must be after check-in.` |
 | 2 adults + 1 child, room for 2 | invalid: `This room fits up to 2 guests.` |
+
+### Also in this file
+`staySummary({ nights, adults, children })` is the line at the top of the payment page:
+`{ nights: 3, adults: 2, children: 1 }` → `'3 nights · 2 adults, 1 child'`, and
+`{ nights: 1, adults: 1, children: 0 }` → `'1 night · 1 adult'`.
 
 ## Your task
 Set a 15-minute timer, read `stayValidator.js` top to bottom, and talk through every bug you find. Then confirm:

@@ -20,6 +20,11 @@ The practice runner pins the machine time zone to `America/Toronto`, like a phon
 | `2026-07-01T03:00:00Z` | `Pacific/Honolulu` | `2026-06-30` (5:00 pm in Honolulu) |
 | `2026-07-01T03:00:00Z` | `Europe/Paris` | `2026-07-01` (5:00 am in Paris) |
 
+### Also in this file
+`voucherMessage(voucher, now, timeZone)` is the text on the voucher screen:
+`'Show this voucher at breakfast today.'` when the voucher is valid, otherwise
+`'This voucher is valid on <validOn>.'`.
+
 ## Your task
 Read `hotelLocalDate.js` and find the bug before running anything. Explain the root cause out loud, fix it, then confirm:
 

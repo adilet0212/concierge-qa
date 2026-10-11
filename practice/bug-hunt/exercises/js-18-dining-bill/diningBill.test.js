@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calculateBill } from './diningBill.js';
+import { calculateBill, deliveryWindow } from './diningBill.js';
 
 describe('calculateBill', () => {
   it('prices a sandwich and a juice', () => {
@@ -21,5 +21,19 @@ describe('calculateBill', () => {
   it('prices round amounts', () => {
     const items = [{ name: 'Steak frites', price: 42, quantity: 2 }];
     expect(calculateBill(items, 0.1)).toEqual({ subtotal: 84, tax: 8.4, total: 92.4 });
+  });
+});
+
+describe('deliveryWindow', () => {
+  it('is based on the slowest dish', () => {
+    const items = [
+      { name: 'Steak frites', price: 42, quantity: 1, prepMinutes: 25 },
+      { name: 'Fresh juice', price: 6.2, quantity: 1, prepMinutes: 5 },
+    ];
+    expect(deliveryWindow(items)).toBe('Delivery in 35-45 minutes');
+  });
+
+  it('assumes 15 minutes when a dish has no preparation time', () => {
+    expect(deliveryWindow([{ name: 'Biscotti', price: 2.2, quantity: 1 }])).toBe('Delivery in 25-35 minutes');
   });
 });

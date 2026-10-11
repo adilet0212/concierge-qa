@@ -17,6 +17,11 @@ can show "Something went wrong, please try again".
 | property `{ id: 'tokyo', name: 'Aurelle Tokyo' }`, rooms `[{ id: 'deluxe-king' }]` | resolves to `{ id: 'tokyo', name: 'Aurelle Tokyo', rooms: [{ id: 'deluxe-king' }] }` |
 | property OK, rooms request fails with `Error('503 Service Unavailable')` | rejects with that error |
 
+### Also in this file
+`screenTitle(property)` is the title of the details screen, once the rooms are loaded:
+`{ name: 'Aurelle Tokyo', rooms: [3 rooms] }` → `'Aurelle Tokyo · 3 room types'`, and
+`'Aurelle Maui · 1 room type'` for a single room type.
+
 ## Your task
 Read `propertyLoader.js` and find the bug before running anything. Explain the root cause out loud, fix it, then confirm:
 

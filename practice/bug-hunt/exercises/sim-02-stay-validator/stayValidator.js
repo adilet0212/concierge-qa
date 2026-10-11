@@ -30,3 +30,14 @@ export function validateStay({ checkIn, checkOut, adults, children, room, today 
 
   return { valid: errors.length === 0, nights, errors };
 }
+
+// Line at the top of the payment page, e.g. "3 nights · 2 adults, 1 child".
+export function staySummary({ nights, adults, children }) {
+  const nightText = nights === 1 ? '1 night' : `${nights} nights`;
+  const adultText = adults === 1 ? '1 adult' : `${adults} adults`;
+  if (children === 0) {
+    return `${nightText} · ${adultText}`;
+  }
+  const childText = children === 1 ? '1 child' : `${children} children`;
+  return `${nightText} · ${adultText}, ${childText}`;
+}

@@ -28,6 +28,10 @@ const rooms = [
 | `0` | 801, 804 |
 | `1` | 802 |
 
+### Also in this file
+`filterOptions()` builds the drop-down's options: `{ value: '', label: 'All rooms' }` first, then
+`{ value: 0, label: 'Vacant' }`, `{ value: 1, label: 'Occupied' }` and `{ value: 2, label: 'Being cleaned' }`.
+
 ## Your task
 Read `roomFilter.js` and find the bug before running anything. Explain the root cause out loud, fix it, then confirm:
 

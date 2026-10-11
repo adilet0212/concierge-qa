@@ -17,6 +17,15 @@ is accepted. Anything else is rejected before calling the API.
 | `'XAUR-4F7K2Q'` | no |
 | `'AUR-4F7K'` | no |
 
+### Also in this file
+`referenceHint(input)` is the help text under the field.
+
+| Input | Output |
+|---|---|
+| `'   '` (empty) | `'Enter the reference from your confirmation email.'` |
+| `'AUR-4F7K2Q'` | `''` (no hint) |
+| `'AUR-4F7K'` | `'A booking reference looks like AUR-4F7K2Q.'` |
+
 ## Your task
 Read `bookingReference.js` and find the bug before running anything. Explain the root cause out loud, fix it, then confirm:
 

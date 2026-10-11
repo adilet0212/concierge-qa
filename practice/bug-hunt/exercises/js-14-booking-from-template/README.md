@@ -27,6 +27,11 @@ const b = createRoomBooking(template, 'Tom Becker', ['late-checkout']);
 | `b.extras` | `['airport-transfer', 'late-checkout']` |
 | `template.extras` | `['airport-transfer']` |
 
+### Also in this file
+`createGroupBookings(template, guests)` creates one booking per guest. With the template above and
+guests `[{ name: 'Ines Moreau', requests: ['crib'] }, { name: 'Tom Becker' }]`, the two bookings'
+extras are `['airport-transfer', 'crib']` and `['airport-transfer']`.
+
 ## Your task
 Read `groupBooking.js` and find the bug before running anything. Explain the root cause out loud, fix it, then confirm:
 

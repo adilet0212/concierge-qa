@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { nightsBetween, validateStay } from './stayValidator.js';
+import { nightsBetween, staySummary, validateStay } from './stayValidator.js';
 
 const deluxeKing = { name: 'Deluxe King', maxGuests: 2 };
 
@@ -48,5 +48,15 @@ describe('validateStay', () => {
   it('rejects more guests than the room fits', () => {
     const result = validateStay(form({ adults: 2, children: 1 }));
     expect(result.errors).toEqual(['This room fits up to 2 guests.']);
+  });
+});
+
+describe('staySummary', () => {
+  it('lists nights, adults and children', () => {
+    expect(staySummary({ nights: 3, adults: 2, children: 1 })).toBe('3 nights · 2 adults, 1 child');
+  });
+
+  it('leaves out children when there are none', () => {
+    expect(staySummary({ nights: 1, adults: 1, children: 0 })).toBe('1 night · 1 adult');
   });
 });

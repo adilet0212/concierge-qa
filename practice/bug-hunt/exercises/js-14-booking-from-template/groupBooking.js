@@ -5,3 +5,8 @@ export function createRoomBooking(template, guestName, extraRequests = []) {
   extraRequests.forEach((request) => booking.extras.push(request));
   return booking;
 }
+
+// Books the whole group: one booking per guest, each with their own requests.
+export function createGroupBookings(template, guests) {
+  return guests.map((guest) => createRoomBooking(template, guest.name, guest.requests));
+}

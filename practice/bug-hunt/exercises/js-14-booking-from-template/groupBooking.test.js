@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createRoomBooking } from './groupBooking.js';
+import { createGroupBookings, createRoomBooking } from './groupBooking.js';
 
 function weddingTemplate() {
   return {
@@ -29,5 +29,17 @@ describe('createRoomBooking', () => {
     const template = weddingTemplate();
     createRoomBooking(template, 'Ines Moreau', ['crib']);
     expect(template).toEqual(weddingTemplate());
+  });
+});
+
+describe('createGroupBookings', () => {
+  it('creates one booking per guest with only their own requests', () => {
+    const bookings = createGroupBookings(weddingTemplate(), [
+      { name: 'Ines Moreau', requests: ['crib'] },
+      { name: 'Tom Becker' },
+    ]);
+
+    expect(bookings.map((booking) => booking.guestName)).toEqual(['Ines Moreau', 'Tom Becker']);
+    expect(bookings.map((booking) => booking.extras)).toEqual([['airport-transfer', 'crib'], ['airport-transfer']]);
   });
 });

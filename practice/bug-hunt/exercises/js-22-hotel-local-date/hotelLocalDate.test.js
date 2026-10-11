@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { hotelLocalDate, isBreakfastVoucherValid } from './hotelLocalDate.js';
+import { hotelLocalDate, isBreakfastVoucherValid, voucherMessage } from './hotelLocalDate.js';
 
 describe('hotelLocalDate', () => {
   it.each([
@@ -16,5 +16,13 @@ describe('isBreakfastVoucherValid', () => {
   it('accepts a Tokyo voucher during a Tokyo evening', () => {
     const voucher = { validOn: '2026-03-15' };
     expect(isBreakfastVoucherValid(voucher, new Date('2026-03-15T12:00:00Z'), 'Asia/Tokyo')).toBe(true);
+  });
+});
+
+describe('voucherMessage', () => {
+  it('tells the guest which day a voucher for another day is valid', () => {
+    const voucher = { validOn: '2026-03-20' };
+    const now = new Date('2026-03-15T12:00:00Z');
+    expect(voucherMessage(voucher, now, 'Asia/Tokyo')).toBe('This voucher is valid on 2026-03-20.');
   });
 });

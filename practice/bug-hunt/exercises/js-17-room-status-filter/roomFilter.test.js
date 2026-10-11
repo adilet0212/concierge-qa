@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { filterRooms, STATUS } from './roomFilter.js';
+import { filterOptions, filterRooms, STATUS } from './roomFilter.js';
 
 const rooms = [
   { number: 801, status: STATUS.VACANT },
@@ -21,5 +21,16 @@ describe('filterRooms', () => {
 
   it('shows only occupied rooms', () => {
     expect(numbers(filterRooms(rooms, STATUS.OCCUPIED))).toEqual([802]);
+  });
+});
+
+describe('filterOptions', () => {
+  it('starts with "All rooms", then one option per status', () => {
+    expect(filterOptions()).toEqual([
+      { value: '', label: 'All rooms' },
+      { value: STATUS.VACANT, label: 'Vacant' },
+      { value: STATUS.OCCUPIED, label: 'Occupied' },
+      { value: STATUS.CLEANING, label: 'Being cleaned' },
+    ]);
   });
 });

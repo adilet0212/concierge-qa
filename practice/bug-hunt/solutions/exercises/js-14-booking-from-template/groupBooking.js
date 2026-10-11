@@ -8,3 +8,8 @@ export function createRoomBooking(template, guestName, extraRequests = []) {
     extras: [...template.extras, ...extraRequests],
   };
 }
+
+// Books the whole group: one booking per guest, each with their own requests.
+export function createGroupBookings(template, guests) {
+  return guests.map((guest) => createRoomBooking(template, guest.name, guest.requests));
+}

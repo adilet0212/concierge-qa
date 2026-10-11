@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { findAvailableRoom } from './findAvailableRoom.js';
+import { countAvailableByType, findAvailableRoom } from './findAvailableRoom.js';
 
 const rooms = [
   { number: 1201, type: 'suite', available: false },
@@ -18,5 +18,15 @@ describe('findAvailableRoom', () => {
 
   it('returns null for an empty list', () => {
     expect(findAvailableRoom([], 'king')).toBeNull();
+  });
+});
+
+describe('countAvailableByType', () => {
+  it('counts the available rooms of each type', () => {
+    expect(countAvailableByType(rooms)).toEqual({ king: 1, suite: 1 });
+  });
+
+  it('returns an empty object for an empty list', () => {
+    expect(countAvailableByType([])).toEqual({});
   });
 });

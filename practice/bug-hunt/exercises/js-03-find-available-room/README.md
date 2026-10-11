@@ -22,6 +22,10 @@ Rooms:
 | `'twin'` | `null` |
 | `'king'` on an empty list | `null` |
 
+### Also in this file
+`countAvailableByType(rooms)` counts the available rooms of each type for the front desk screen.
+For the rooms above it returns `{ king: 1, suite: 1 }`; for an empty list, `{}`.
+
 ## Your task
 Read `findAvailableRoom.js` and find the bug before running anything. Explain the root cause out loud, fix it, then confirm:
 

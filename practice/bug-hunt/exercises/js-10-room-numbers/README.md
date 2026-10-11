@@ -14,6 +14,11 @@ Housekeeping supervisors paste a comma-separated list of rooms to clean first, e
 | `'802'` | `[802]` |
 | `'1502,1503,1504,1505'` | `[1502, 1503, 1504, 1505]` |
 
+### Also in this file
+Empty entries are skipped: `'1204,,1207,'` → `[1204, 1207]`.
+`cleaningRoute(roomNumbers)` turns the list into the route shown on the housekeeping tablet:
+`[1204, 1207, 1301]` → `'1204 → 1207 → 1301'`.
+
 ## Your task
 Read `roomNumbers.js` and find the bug before running anything. Explain the root cause out loud, fix it, then confirm:
 
