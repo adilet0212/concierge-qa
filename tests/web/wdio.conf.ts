@@ -92,12 +92,7 @@ export const config: WebdriverIO.Config = {
 
   /** Runs after every test attempt (including retries). */
   async afterTest(test, _context, result) {
-    if (!result.passed) {
-      // Evidence for debugging, attached to the Allure report.
-      await allure.addAttachment('Screenshot', Buffer.from(await browser.takeScreenshot(), 'base64'), 'image/png');
-      await allure.addAttachment('Page source', await browser.getPageSource(), 'text/html');
-      await allure.addAttachment('URL', await browser.getUrl(), 'text/plain');
-    }
+    // Record the result first: if the browser has crashed, the screenshot below would throw.
     recordResult({
       profile: currentProfile(),
       spec: path.basename(test.file ?? ''),
@@ -108,6 +103,30 @@ export const config: WebdriverIO.Config = {
       maxRetries: test._retries ?? 0,
       durationMs: result.duration,
       error: result.passed ? undefined : String(result.error?.message ?? result.error ?? '').slice(0, 500),
+    });
+    if (!result.passed) {
+      // Evidence for debugging, attached to the Allure report.
+      await allure.addAttachment('Screenshot', Buffer.from(await browser.takeScreenshot(), 'base64'), 'image/png');
+      await allure.addAttachment('Page source', await browser.getPageSource(), 'text/html');
+      await allure.addAttachment('URL', await browser.getUrl(), 'text/plain');
+    }
+  },
+
+  /**
+   * Runs after every Mocha hook (beforeEach...). When a hook fails, Mocha skips the tests it
+   * belongs to, so afterTest never runs for them. Recording the failed hook keeps the summary honest.
+   */
+  afterHook(test, _context, result) {
+    if (!result.error) return;
+    recordResult({
+      profile: currentProfile(),
+      spec: path.basename(test.file ?? ''),
+      title: [test.parent, test.title].filter(Boolean).join(' '),
+      passed: false,
+      attempt: 0,
+      maxRetries: 0,
+      durationMs: result.duration,
+      error: String(result.error.message ?? result.error).slice(0, 500),
     });
   },
 };

@@ -15,6 +15,7 @@ import { DEMO_APP_PATH } from './demo-app.ts';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const deviceName = process.env.ANDROID_DEVICE_NAME ?? 'Android Emulator';
+const profile = `Android (${deviceName}, native app)`; // label used in the CI summary
 
 export const config: WebdriverIO.Config = {
   runner: 'local',
@@ -89,12 +90,9 @@ export const config: WebdriverIO.Config = {
   },
 
   async afterTest(test, _context, result) {
-    if (!result.passed) {
-      await allure.addAttachment('Screenshot', Buffer.from(await browser.takeScreenshot(), 'base64'), 'image/png');
-      await allure.addAttachment('Screen hierarchy (XML)', await browser.getPageSource(), 'application/xml');
-    }
+    // Record the result first: if the session has died, the screenshot below would throw.
     recordResult({
-      profile: `Android (${deviceName}, native app)`,
+      profile,
       spec: path.basename(test.file ?? ''),
       title: [test.parent, test.title].filter(Boolean).join(' '),
       passed: result.passed,
@@ -102,6 +100,25 @@ export const config: WebdriverIO.Config = {
       maxRetries: test._retries ?? 0,
       durationMs: result.duration,
       error: result.passed ? undefined : String(result.error?.message ?? result.error ?? '').slice(0, 500),
+    });
+    if (!result.passed) {
+      await allure.addAttachment('Screenshot', Buffer.from(await browser.takeScreenshot(), 'base64'), 'image/png');
+      await allure.addAttachment('Screen hierarchy (XML)', await browser.getPageSource(), 'application/xml');
+    }
+  },
+
+  /** A failing beforeEach (e.g. restartApp) skips its tests, so record the hook itself. */
+  afterHook(test, _context, result) {
+    if (!result.error) return;
+    recordResult({
+      profile,
+      spec: path.basename(test.file ?? ''),
+      title: [test.parent, test.title].filter(Boolean).join(' '),
+      passed: false,
+      attempt: 0,
+      maxRetries: 0,
+      durationMs: result.duration,
+      error: String(result.error.message ?? result.error).slice(0, 500),
     });
   },
 };

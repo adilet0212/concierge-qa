@@ -30,7 +30,7 @@ apps/
 .DS_Store
 Thumbs.db
 
-# Environment files (BrowserStack keys etc. come from env vars, never from the repo)
+# Environment files (credentials, e.g. for a device cloud, come from env vars, never from the repo)
 .env
 .env.*
 !.env.example

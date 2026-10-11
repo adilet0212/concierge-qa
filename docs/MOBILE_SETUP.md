@@ -80,7 +80,8 @@ npm run test:mobile
 
 The first run is slow: Appium installs the app and its own helper apps on the emulator.
 To use a real phone instead, enable *Developer options → USB debugging*, plug it in, check that
-`adb devices` lists it, and run with `ANDROID_DEVICE_NAME=<anything descriptive>`.
+`adb devices` lists it, and run with a descriptive device name, e.g.
+`npx cross-env ANDROID_DEVICE_NAME="My Pixel" npm run test:mobile` (works on Windows, macOS and Linux).
 
 ## Troubleshooting
 

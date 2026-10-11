@@ -164,6 +164,9 @@ jobs:
       - run: npm run test:seeded-bugs
         env:
           MAX_INSTANCES: 4
+      - name: Job summary
+        if: always()
+        run: npx tsx scripts/summarize-results.ts "Seeded-bug run (failures expected)"
       - uses: actions/upload-artifact@v7
         if: always()
         with:

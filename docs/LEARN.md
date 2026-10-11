@@ -58,7 +58,7 @@ for one spec file and runs Mocha in it. The important settings in
 | Setting | Our value | Why |
 |---|---|---|
 | `specs` | `tests/web/specs/*.spec.ts` | Which files are tests |
-| `maxInstances` | 5 (4 in CI) | Spec files run in parallel, one browser each. Safe because tests don't share data |
+| `maxInstances` | 5 (4 in the CI regression and seeded-bug jobs) | Spec files run in parallel, one browser each. Safe because tests don't share data |
 | `capabilities` | Chrome or Firefox (env `BROWSER`) | Which browser, and its options (headless, window size) |
 | `baseUrl` | `http://localhost:4300` | So tests can write `browser.url('/sign-in')` |
 | `waitforTimeout` | 10 s (20 s for Android) | How long auto-waits and `expect` matchers keep retrying |
@@ -158,6 +158,8 @@ counts as caught only if the test fails on both attempts.
 ### Tags: smoke and regression
 Tags are just words in titles. Every `describe` contains `@regression`, and six `it` titles contain
 `@smoke`. `--mochaOpts.grep @smoke` tells Mocha to run only tests whose full title matches.
+Spec files with no matching test appear as "skipped" in WDIO's last line (a smoke run ends with
+`5 passed, 3 skipped, 8 total`). That means "nothing to run in this file", not a skipped test.
 
 ---
 
@@ -349,7 +351,7 @@ chat, five properties in different time zones, and three languages. One framewor
 web, mobile web and a native Android app."
 
 **0:20 to 0:50. Proof it works.** *(CI run summary)*
-"Every push runs a one-minute smoke suite on Chrome, then the full regression on Chrome and Firefox
+"Every push to main runs a one-minute smoke suite on Chrome, then the full regression on Chrome and Firefox
 in parallel, mobile web on iPhone and Pixel sizes, and Appium on an Android emulator. Each job writes
 a summary: passed, failed, flaky and time, so nobody has to download logs. Tests that only pass on
 retry are flagged as FLAKY instead of hidden."

@@ -10,7 +10,7 @@ import { browser } from '@wdio/globals';
 export const RESULTS_DIR = path.join(process.cwd(), 'reports', 'results');
 
 export interface ResultRecord {
-  profile: string; // e.g. "chrome", "firefox", "iPhone 14 (emulated)"
+  profile: string; // e.g. "chrome", "firefox", "iPhone 14 size (Chrome emulation)"
   spec: string;
   title: string; // full title, e.g. "Room booking @regression calculates the price for Aurelle Tokyo"
   passed: boolean;

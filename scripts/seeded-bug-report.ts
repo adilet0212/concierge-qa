@@ -5,7 +5,9 @@
  * It maps the failed tests to the six seeded bugs (test-data/seeded-bugs.json lists which
  * tests are expected to catch each bug) and prints a catch-rate table, e.g. "6/6 caught".
  *
- * Exit code 0 only if EVERY seeded bug made at least one test fail.
+ * Exit code 0 only if EVERY seeded bug made at least one test fail AND every failure is explained
+ * by a seeded bug. Without the second rule, a build that broke every page would make every test
+ * fail and look like a perfect "6/6 caught".
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -55,9 +57,13 @@ const lines = [
 
 const unexplained = failed.filter((test) => !explained.has(test.title));
 if (unexplained.length > 0) {
-  lines.push('', '**Other failures** (not mapped to a seeded bug; check for side effects or flakiness):', '');
+  lines.push(
+    '',
+    `❌ **${unexplained.length} other failure(s)** that no seeded bug explains (a side effect, a broken build or a flaky test). The run fails until they are fixed:`,
+    '',
+  );
   for (const test of unexplained) lines.push(`- ${test.title}`);
 }
 
 publishMarkdown(`${lines.join('\n')}\n`);
-process.exit(allCaught ? 0 : 1);
+process.exit(allCaught && unexplained.length === 0 ? 0 : 1);

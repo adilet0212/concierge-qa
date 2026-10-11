@@ -139,7 +139,8 @@ Add one new test to the Android suite for the WebdriverIO demo app.
   Which scrollable element do you need on the Swipe screen?
 - Option 2: the dropdown opens an Android list, which isn't part of the app's own screen. How did
   `NativeAlert.ts` find things that have no accessibility id?
-- Option 3: look at `browser.action('pointer')` in the WebdriverIO docs, or `dragAndDrop`.
+- Option 3: look at `browser.action('pointer')` in the WebdriverIO docs, or `dragAndDrop`. The tab
+  bar's `Tab` type in `screens/TabBar.ts` doesn't list the Drag tab yet; adding it is part of the task.
 
 **Run it**
 - Locally, if you have an emulator ([MOBILE_SETUP.md](MOBILE_SETUP.md)):

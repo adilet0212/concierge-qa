@@ -24,7 +24,7 @@ finds them.
 - **Proven catch rate.** CI runs the suite against a build with six seeded regressions (wrong service
   charge, check-out on the check-in day, wrong time zone, missing translation, double order, short
   sign-in code) and passes only when **6/6** are caught.
-- **Fast feedback, readable results.** A one-minute smoke suite gates the full runs. Every CI job writes
+- **Fast feedback, readable results.** A one-minute smoke suite runs first, and the cross-browser runs wait for it. Every CI test job writes
   a passed / failed / flaky / time table to the GitHub job summary, and Allure reports with screenshots
   are published to GitHub Pages.
 - **Flaky tests are visible, not hidden.** Failed tests retry once, and a test that passes only on the
@@ -33,26 +33,26 @@ finds them.
 ## Architecture
 
 ```mermaid
-flowchart LR
-  subgraph repo["This repo"]
-    data["test-data/*.json<br/>properties, languages"]
-    web["tests/web<br/>WebdriverIO + Mocha<br/>page objects"]
-    mob["tests/mobile<br/>WebdriverIO + Appium<br/>screen objects"]
-  end
+flowchart TB
+  ci["GitHub Actions<br/>checks, smoke, regression x2, mobile web x2,<br/>Android, seeded bugs 6/6"]
+  data["test-data/*.json<br/>properties, languages"]
+  web["tests/web<br/>WebdriverIO + Mocha, page objects"]
+  mob["tests/mobile<br/>WebdriverIO + Appium, screen objects"]
+  browsers["Chrome, Firefox<br/>desktop + mobile emulation"]
+  app["Aurelle demo app<br/>React + Express API on localhost:4300"]
+  appium["Appium 3 server<br/>UiAutomator2 driver"]
+  device["Android emulator<br/>WebdriverIO demo app"]
+  reports["Job summaries +<br/>Allure reports on GitHub Pages"]
 
+  ci --> web
+  ci --> mob
+  ci --> reports
   data --> web
-  web -- "WebDriver / BiDi" --> browsers["Chrome, Firefox<br/>desktop + mobile emulation"]
-  browsers --> app["Aurelle demo app<br/>React + Express API<br/>localhost:4300"]
-  web -- "HTTP: test data and API tests" --> app
-  mob -- "WebDriver over HTTP" --> appium["Appium 3 server<br/>UiAutomator2 driver"]
-  appium --> device["Android emulator<br/>WebdriverIO demo app"]
-
-  subgraph ci["GitHub Actions"]
-    jobs["checks, smoke, regression x2,<br/>mobile web x2, Android,<br/>seeded bugs 6/6"]
-  end
-  jobs -. runs .-> web
-  jobs -. runs .-> mob
-  jobs --> reports["Job summaries +<br/>Allure reports on GitHub Pages"]
+  web -- "WebDriver / BiDi" --> browsers
+  browsers --> app
+  web -- "HTTP: test data, API tests" --> app
+  mob -- "WebDriver over HTTP" --> appium
+  appium --> device
 ```
 
 ## Quick start
@@ -86,7 +86,7 @@ Start the app first (`npm run app`) for every web suite.
 | `npm run bug-hunt -- js-08`, `npm run bug-hunt:verify` | The [bug-hunt practice pack](practice/bug-hunt/README.md) |
 
 Useful options (environment variables): `HEADED=true` to watch the browser, `BROWSER=firefox`,
-`MAX_INSTANCES=2` to run fewer browsers at once, `MOBILE_PROFILE=iphone|pixel`, `BASE_URL`.
+`MAX_INSTANCES=2` to run fewer browsers at once (worth it on a machine with less than 8 GB of RAM), `MOBILE_PROFILE=iphone|pixel`, `BASE_URL`.
 They work on every OS through cross-env, e.g. `npx cross-env HEADED=true npm run test:smoke`.
 
 ## Test reports
@@ -133,7 +133,7 @@ tests/web/           WebdriverIO web suite: pageobjects/, specs/, support/, conf
 tests/mobile/        WebdriverIO + Appium suite: screens/, specs/, config
 test-data/           properties, languages, seeded-bug map (JSON)
 scripts/             CI helpers: job summaries, catch-rate report, Pages index, APK download
-.github/workflows/   ci.yml (every push and PR), android.yml (main and on demand)
+.github/workflows/   ci.yml (pushes to main and pull requests), android.yml (main and on demand)
 practice/bug-hunt/   "find the bug" exercises with tests, answers and solutions
 docs/                strategy, bug reports, study guide, exercises, mobile setup
 ```
